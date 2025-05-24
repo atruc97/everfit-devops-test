@@ -4,10 +4,14 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 
-# Environment variables
+# Environment variables and secrets
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets/
 
 # IDE
 .idea/
@@ -24,21 +28,22 @@ Thumbs.db
 *.tfstate
 *.tfstate.*
 *.tfvars
-.terraformrc
-terraform.rc
+!example.tfvars
 .terraform.lock.hcl
 
 # Docker
 .docker/
 
-# Build
+# Build and logs
 dist/
 build/
 coverage/
-
-# Logs
 logs/
 *.log
+
+# Testing
+coverage/
+test-results/
 
 # Temporary files
 *.tmp

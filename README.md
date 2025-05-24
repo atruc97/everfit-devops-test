@@ -10,21 +10,18 @@ This project deploys a simple Node.js application on AWS ECS using Fargate, with
 project-root/
 ├── app/
 │   ├── src/
-│   ├── index.js
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── Dockerfile
-│   └── .dockerignore
+│   │   └── index.js      
+│   ├── package.json      
+│   ├── package-lock.json 
+│   ├── Dockerfile        
 ├── terraform/
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── outputs.tf
-│   ├── route53.tf
-│   ├── terraform.tfstate
-│   └── terraform.tfstate.backup
+│   ├── main.tf        
+│   ├── variables.tf    
+│   ├── outputs.tf     
+│   ├── route53.tf       
 ├── .github/
 │   └── workflows/
-│       ├── ci-deployment.yml
+│       ├── ci-deployment.yml    
 │       └── ci-rollback-images.yml
 ├── .gitignore
 └── README.md

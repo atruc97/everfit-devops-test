@@ -1,8 +1,51 @@
+# Dependencies
 node_modules
 npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Version control
 .git
 .gitignore
+
+# Environment and secrets
 .env
-.github
-terraform
-README.md 
+.env.*
+*.pem
+*.key
+*.crt
+secrets/
+
+# Documentation
+README.md
+*.md
+*.txt
+
+# Development and test
+test/
+tests/
+coverage/
+.vscode/
+.idea/
+*.test.js
+*.spec.js
+
+# Build and logs
+dist/
+build/
+logs/
+*.log
+
+# Terraform
+terraform/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+
+# GitHub
+.github/
+
+# Temporary files
+.DS_Store
+Thumbs.db 
