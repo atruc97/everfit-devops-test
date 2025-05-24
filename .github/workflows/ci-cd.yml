@@ -43,15 +43,26 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Get latest version number
+        id: version
+        run: |
+          # Get the latest version from ECR
+          LATEST_VERSION=$(aws ecr describe-images --repository-name $ECR_REPOSITORY --region $AWS_REGION --query 'imageDetails[*].imageTags[]' --output text | grep -o 'v[0-9]*' | sort -V | tail -n 1 || echo "v0")
+          # Extract number and increment
+          VERSION_NUM=$(echo $LATEST_VERSION | grep -o '[0-9]*' || echo "0")
+          NEW_VERSION=$((VERSION_NUM + 1))
+          echo "NEW_VERSION=v$NEW_VERSION" >> $GITHUB_ENV
+
       - name: Build, tag, and push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          # Also tag as latest
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          # Build image
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$NEW_VERSION .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+
+          # Push images
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$NEW_VERSION
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
       - name: Update ECS service
