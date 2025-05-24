@@ -66,15 +66,3 @@ variable "service_desired_count" {
   type        = number
   default     = 1
 }
-
-variable "domain_name" {
-  description = "Domain name for the application"
-  type        = string
-  default     = "example.com"
-}
-
-variable "app_subdomain" {
-  description = "Subdomain for the application"
-  type        = string
-  default     = "sample-app"
-}

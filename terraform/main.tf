@@ -240,20 +240,4 @@ resource "aws_cloudwatch_log_group" "ecs" {
   retention_in_days = 30
 }
 
-# Route 53 Zone
-resource "aws_route53_zone" "main" {
-  name = var.domain_name
-}
 
-# Route 53 Record
-resource "aws_route53_record" "app" {
-  zone_id = aws_route53_zone.main.zone_id
-  name    = "${var.app_subdomain}.${var.domain_name}"
-  type    = "A"
-
-  alias {
-    name                   = aws_lb.main.dns_name
-    zone_id                = aws_lb.main.zone_id
-    evaluate_target_health = true
-  }
-}
