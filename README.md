@@ -1,98 +1,139 @@
-# Everfit Application
+# Everfit DevOps Test Project
 
-This repository contains a sample application deployed to AWS ECS Fargate using Terraform and GitHub Actions for CI/CD.
+## Overview
 
-## Project Structure
+This project demonstrates a CI/CD pipeline for a Node.js application using GitHub Actions, AWS ECS, and ECR. The application is a simple Express server that responds with a welcome message and health status.
 
-```
-.
-├── terraform/           # Terraform configuration files
-│   ├── main.tf         # Main Terraform configuration
-│   ├── variables.tf    # Variable definitions
-│   └── outputs.tf      # Output definitions
-├── .github/
-│   └── workflows/      # GitHub Actions workflows
-│       └── ci-cd.yml   # CI/CD pipeline configuration
-├── Dockerfile          # Container definition
-└── README.md          # This file
-```
+## Architecture
+
+- **Application**: Node.js Express server
+- **Container**: Docker
+- **CI/CD**: GitHub Actions
+- **Infrastructure**: AWS (ECS, ECR, ALB)
+- **Infrastructure as Code**: Terraform
 
 ## Prerequisites
 
-- AWS CLI configured with appropriate credentials
-- Terraform installed
-- Docker installed
-- Node.js and npm installed
+- AWS Account with appropriate permissions
+- GitHub Account
+- Docker installed locally
+- Node.js and npm installed locally
+- Terraform installed locally
 
-## Infrastructure Setup
+## Local Development
 
-1. Navigate to the terraform directory:
+### Setup
 
-   ```bash
-   cd terraform
-   ```
+1. Clone the repository:
 
-2. Initialize Terraform:
+```bash
+git clone https://github.com/atruc97/everfit-devops-test.git
+cd everfit-devops-test
+```
 
-   ```bash
-   terraform init
-   ```
+2. Install dependencies:
 
-3. Review the planned changes:
+```bash
+npm install
+```
 
-   ```bash
-   terraform plan
-   ```
+3. Run tests:
 
-4. Apply the infrastructure:
-   ```bash
-   terraform apply
-   ```
+```bash
+npm test
+```
+
+4. Run locally:
+
+```bash
+npm start
+```
+
+### Docker
+
+Build and run the Docker image locally:
+
+```bash
+docker build -t everfit-app .
+docker run -p 3000:3000 everfit-app
+```
+
+## Infrastructure
+
+### AWS Resources
+
+- ECS Cluster with Fargate
+- ECR Repository for Docker images
+- Application Load Balancer
+- VPC with public and private subnets
+- Security Groups
+- IAM Roles and Policies
+
+### Terraform
+
+The infrastructure is managed using Terraform. Key resources:
+
+- VPC and networking
+- ECS cluster and service
+- ECR repository
+- ALB and target groups
+- Security groups
+- IAM roles and policies
+
+To apply the infrastructure:
+
+```bash
+cd terraform
+terraform init
+terraform plan
+terraform apply
+```
 
 ## CI/CD Pipeline
 
-The project uses GitHub Actions for continuous integration and deployment. The pipeline:
+### GitHub Actions Workflow
 
-1. Builds the Docker image
-2. Pushes it to Amazon ECR
-3. Updates the ECS service with the new image
+The CI/CD pipeline is configured in `.github/workflows/ci-cd.yml` and includes:
 
-### Required Secrets
+1. Build and test the application
+2. Build Docker image
+3. Push to ECR
+4. Update ECS service
 
-Add the following secrets to your GitHub repository:
+### Environment Variables
+
+Required GitHub Secrets:
 
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 
-## Local Development
-
-1. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-2. Start the development server:
-   ```bash
-   npm start
-   ```
-
 ## Deployment
 
-The application is automatically deployed when changes are pushed to the main branch. The deployment process:
+The application is automatically deployed when code is pushed to the main branch. The deployment process:
 
 1. Builds a new Docker image
-2. Pushes it to ECR
-3. Updates the ECS service
+2. Tags it with the commit SHA and 'latest'
+3. Pushes to ECR
+4. Updates the ECS service
 
-## Infrastructure Components
+## Testing
 
-- VPC with public and private subnets
-- ECS Fargate cluster
-- Application Load Balancer
-- ECR repository
-- CloudWatch log groups
-- IAM roles and policies
+The application includes unit tests using Jest:
+
+- Tests the welcome endpoint
+- Tests the health check endpoint
+
+Run tests locally:
+
+```bash
+npm test
+```
+
+## Monitoring
+
+- CloudWatch Logs for application logs
+- ECS service metrics
+- ALB metrics
 
 ## Cleanup
 
@@ -102,3 +143,7 @@ To destroy the infrastructure:
 cd terraform
 terraform destroy
 ```
+
+## License
+
+ISC
