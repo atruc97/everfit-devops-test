@@ -12,6 +12,7 @@ env:
   AWS_REGION: us-east-1
   ECS_CLUSTER: everfit-app-cluster
   ECS_SERVICE: everfit-app-service
+  ECR_REPOSITORY: everfit-app-repo
 
 jobs:
   rollback:
@@ -24,10 +25,34 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Get task definition
+        id: task-def
+        run: |
+          # Get the latest task definition
+          TASK_DEF=$(aws ecs describe-task-definition --task-definition everfit-app-task --query 'taskDefinition.taskDefinitionArn' --output text)
+          echo "TASK_DEF=$TASK_DEF" >> $GITHUB_ENV
+
+      - name: Update task definition with old image
+        id: update-task
+        run: |
+          # Get the current task definition
+          TASK_DEF=$(aws ecs describe-task-definition --task-definition everfit-app-task)
+
+          # Create new task definition with old image
+          NEW_TASK_DEF=$(echo $TASK_DEF | jq --arg IMAGE "${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.event.inputs.version }}" '.taskDefinition | .containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+
+          # Register new task definition
+          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEF" --query 'taskDefinition.taskDefinitionArn' --output text)
+          echo "NEW_TASK_DEF_ARN=$NEW_TASK_DEF_ARN" >> $GITHUB_ENV
+
       - name: Rollback to version
         run: |
           aws ecs update-service \
             --cluster $ECS_CLUSTER \
             --service $ECS_SERVICE \
-            --task-definition everfit-app-task:${{ github.event.inputs.version }} \
+            --task-definition $NEW_TASK_DEF_ARN \
             --force-new-deployment
