@@ -80,12 +80,10 @@ resource "aws_ecs_service" "app" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.app.arn
+    target_group_arn = data.aws_lb_target_group.existing.arn
     container_name   = "${var.project_name}-container"
     container_port   = var.container_port
   }
-
-  depends_on = [aws_lb_listener.front_end]
 }
 
 # Application Load Balancer
@@ -160,7 +158,7 @@ resource "aws_security_group" "ecs_tasks" {
     protocol        = "tcp"
     from_port       = var.container_port
     to_port         = var.container_port
-    security_groups = [aws_security_group.alb.id]
+    security_groups = [data.aws_security_group.alb.id]
   }
 
   egress {

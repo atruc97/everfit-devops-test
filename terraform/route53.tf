@@ -1,15 +1,12 @@
-resource "aws_route53_zone" "main" {
+# Use existing hosted zone
+data "aws_route53_zone" "existing" {
   name = "example.com"
 }
 
-resource "aws_route53_record" "app" {
-  zone_id = aws_route53_zone.main.zone_id
+# Use existing A record
+data "aws_route53_record" "existing" {
+  zone_id = data.aws_route53_zone.existing.zone_id
   name    = "sample-app.example.com"
   type    = "A"
-
-  alias {
-    name                   = aws_lb.main.dns_name
-    zone_id                = aws_lb.main.zone_id
-    evaluate_target_health = true
-  }
 }
+
