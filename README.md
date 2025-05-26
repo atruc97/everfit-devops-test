@@ -10,18 +10,20 @@ This project deploys a simple Node.js application on AWS ECS using Fargate, with
 project-root/
 ├── app/
 │   ├── src/
-│   │   └── index.js      
-│   ├── package.json      
-│   ├── package-lock.json 
-│   ├── Dockerfile        
+│   │   └── index.js
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── Dockerfile
 ├── terraform/
-│   ├── main.tf        
-│   ├── variables.tf    
-│   ├── outputs.tf     
-│   ├── route53.tf       
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   ├── alb.tf
+│   ├── acm.tf
+│   ├── route53.tf
 ├── .github/
 │   └── workflows/
-│       ├── ci-deployment.yml    
+│       ├── ci-deployment.yml
 │       └── ci-rollback-images.yml
 ├── .gitignore
 └── README.md
@@ -50,6 +52,16 @@ project-root/
   - Application Load Balancer (ALB)
   - Target Group with health check
   - Security Group for ALB
+  - HTTPS Listener (Port 443)
+  - HTTP to HTTPS Redirection
+
+- **SSL/TLS Configuration**:
+
+  - AWS Certificate Manager (ACM) for SSL certificate
+  - HTTPS listener on ALB
+  - Automatic HTTP to HTTPS redirection
+  - Certificate validation through DNS
+  - Certificate auto-renewal
 
 - **ECR Repository**:
 
